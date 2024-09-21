@@ -8,11 +8,13 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-mongoose.connect("mongodb+srv://mlsrinivas2233:QfK9wqO9stUzKob0@cluster0.iskje.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+const PORT = 5000;
+
+mongoose.connect("mongodb+srv://mlsrinivas2233:kEV0uqSqJ1X4VBFQ@cluster0.iskje.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => console.log("DB connection established"));
 
-app.listen(5000, () => {
-  console.log("Server listening on port 5000");
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
 
 const authenticateToken = (req, res, next) => {
@@ -39,7 +41,7 @@ const authenticateToken = (req, res, next) => {
 
 app.get('/myprofile', authenticateToken, async (req, res) => {
   try {
-    let user = await RegisterUser.findById(req.user.id);
+    let user = await RegisterUser.findById(req.user.id).select("-password");
     
     if (!user) {
       return res.status(400).send("Invalid User");
@@ -55,7 +57,7 @@ app.get('/myprofile', authenticateToken, async (req, res) => {
 app.post('/register', async (req, res) => {
   try {
     const { username, email, password, confirmPassword, gender, location } = req.body;
-    console.log("Received data:", req.body);
+    //console.log("Received data:", req.body);
     const userExisting = await RegisterUser.findOne({ email });
     
     if (userExisting) {
@@ -84,10 +86,10 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', async (req, res) => {  
   try {
     const { email, password } = req.body;
-    
+
     let userExist = await RegisterUser.findOne({ email });
     
     if (!userExist) {
@@ -105,15 +107,18 @@ app.post('/login', async (req, res) => {
       email: email,
     };
 
-    jwt.sign(payload, "jwt_token", { expiresIn: '3d' }, (err, token) => {
+    jwt.sign(payload, "jwt_token", { expiresIn: '1d' }, (err, token) => {
       if (err) {
         console.error("JWT signing error:", err);
         return res.status(500).send("Server Error");
       }
-      return res.json({ token });
+
+      return res.json({ jwt_token: token });
     });
+
   } catch (err) {
-    console.log(err);
+    console.log("login error:", err);
     return res.status(500).send("Server Error");
   }
 });
+
