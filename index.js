@@ -107,7 +107,7 @@ app.post('/login', async (req, res) => {
       email: email,
     };
 
-    jwt.sign(payload, "jwt_token", { expiresIn: '1d' }, (err, token) => {
+    jwt.sign(payload, "jwt_token", { expiresIn: '1h' }, (err, token) => {
       if (err) {
         console.error("JWT signing error:", err);
         return res.status(500).send("Server Error");
