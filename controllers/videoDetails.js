@@ -3,7 +3,8 @@ const axios = require("axios")
 
 const VideoDetails =async (req, res) => {
     try {
-        const {id} = req.params
+        const { id } = req.params
+        console.log(id)
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${process.env.YOUTUBE_API_KEY}&part=statistics,snippet,contentDetails,status`)
         const formatVideoDetails = {
             name: response.data.items[0].snippet.channelTitle,

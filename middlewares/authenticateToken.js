@@ -2,8 +2,9 @@ const jwt = require('jsonwebtoken');
 
 const AuthenticateToken = (req, res, next) => {
     try {
-        const jwtToken = req.headers['authorization'];
-        
+        const jwtToken = req.headers['authorization']?.split(' ')[1];
+        console.log(jwtToken);
+
         if (!jwtToken) {
         return res.status(401).send('Token Not Found');
         }
@@ -12,7 +13,7 @@ const AuthenticateToken = (req, res, next) => {
         if (error) {
             return res.status(403).send('Invalid Access Token');
         } else {
-            req.user = payload;
+            req.user = payload; 
             next();
         }
         });
@@ -22,4 +23,4 @@ const AuthenticateToken = (req, res, next) => {
     }
 };
 
-module.exports = AuthenticateToken
+module.exports = AuthenticateToken;
